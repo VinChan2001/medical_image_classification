@@ -67,25 +67,36 @@ pip install -r requirements.txt
 
 3. Download the dataset:
 
-**Option 1: Using Kaggle API**
+**Option 1: Using kagglehub (Recommended)**
+```bash
+pip install kagglehub
+python download_dataset.py
+```
+
+**Option 2: Using Kaggle API**
 ```bash
 pip install kaggle
 kaggle datasets download -d paultimothymooney/chest-xray-pneumonia
 unzip chest-xray-pneumonia.zip -d data/
 ```
 
-**Option 2: Manual Download**
+**Option 3: Manual Download**
 - Visit [Chest X-Ray Images (Pneumonia) Dataset](https://www.kaggle.com/datasets/paultimothymooney/chest-xray-pneumonia)
 - Download and extract to `./data/` directory
 
 ## Dataset Information
 
 - **Source**: Kaggle - Chest X-Ray Images (Pneumonia)
-- **Training Images**: ~5,200 images
-- **Test Images**: ~600 images
+- **Total Size**: 2.29 GB
+- **Training Images**: 5,216 images
+  - NORMAL: 1,341 images
+  - PNEUMONIA: 3,875 images
+- **Test Images**: 624 images
+  - NORMAL: 234 images
+  - PNEUMONIA: 390 images
 - **Classes**: 2 (NORMAL, PNEUMONIA)
 - **Image Format**: JPEG
-- **Note**: Dataset exhibits class imbalance (more pneumonia cases)
+- **Class Imbalance**: ~74% pneumonia cases in training set
 
 ## Model Training
 
