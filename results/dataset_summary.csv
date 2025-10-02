@@ -1,0 +1,5 @@
+Split,Class,Count,Percentage
+Train,PNEUMONIA,"3,875",74.3%
+Train,NORMAL,"1,341",25.7%
+Test,PNEUMONIA,390,62.5%
+Test,NORMAL,234,37.5%
