@@ -10,6 +10,8 @@ A deep learning project for automated pneumonia detection from chest X-ray image
 
 This project implements state-of-the-art deep learning models to classify chest X-ray images as either **NORMAL** or **PNEUMONIA**. The system uses both custom CNN architectures and transfer learning with pre-trained models to achieve high accuracy in medical image classification.
 
+**This repository contains actual results from analyzing 5,840 real chest X-ray images**, including executed Jupyter notebooks with visualizations and statistical analysis.
+
 ### Key Features
 
 - **Multiple Model Architectures**: Custom CNN and 5 pre-trained models (VGG16, ResNet50, InceptionV3, DenseNet121, EfficientNetB0)
@@ -47,6 +49,12 @@ medical-image-classification/
 └── RESULTS_SUMMARY.md           # Project results
 ```
 
+## Quick Start
+
+1. **View Results**: Open `notebooks/01_data_exploration.ipynb` to see executed analysis with real data
+2. **See Visualizations**: Check `results/` folder for generated charts and images
+3. **Train Models**: Follow instructions below to train your own models
+
 ## Results
 
 ### Dataset Statistics (Actual)
@@ -60,13 +68,22 @@ medical-image-classification/
 
 **Total**: 5,840 images | **Size**: 2.29 GB
 
-### Visualizations
+### Visualizations (Generated from Real Data)
 
-See `results/` folder for:
-- Class distribution charts
-- Sample chest X-ray images
-- Image property distributions
-- Training history plots (when models are trained)
+#### Class Distribution
+![Class Distribution](results/class_distribution.png)
+
+#### Sample Chest X-Ray Images
+![Sample Images](results/sample_images_train.png)
+
+#### Image Properties Analysis
+![Image Properties](results/image_properties.png)
+
+**Full results available in**: `results/` folder
+- `class_distribution.png` - Class distribution charts
+- `sample_images_train.png` - Real chest X-ray samples
+- `image_properties.png` - Image dimension analysis
+- `dataset_summary.csv` - Complete statistics
 
 ### Expected Model Performance
 
