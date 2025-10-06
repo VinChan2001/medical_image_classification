@@ -1,15 +1,17 @@
-"""
-Data loader and preprocessing utilities for medical image classification.
-This script uses the Chest X-Ray Images (Pneumonia) dataset from Kaggle.
-"""
+"""Data loading and preprocessing helpers for medical image classification."""
 
 import os
+from pathlib import Path
+from typing import Optional
+
 import numpy as np
-import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from sklearn.model_selection import train_test_split
-import cv2
 from tqdm import tqdm
+
+try:  # Optional dependency for direct image loading utilities
+    import cv2
+except ImportError:  # pragma: no cover - handled gracefully for non-OpenCV setups
+    cv2 = None
 
 
 class MedicalImageLoader:
@@ -27,60 +29,93 @@ class MedicalImageLoader:
         self.data_dir = data_dir
         self.img_size = img_size
         self.batch_size = batch_size
+        self.using_separate_val = False
+        self.val_image_count = 0
 
-    def create_data_generators(self, validation_split=0.2):
+    def create_data_generators(
+        self,
+        validation_split=0.2,
+        seed: Optional[int] = 42,
+        min_val_images: int = 64,
+    ):
         """
         Create data generators with augmentation.
 
         Args:
             validation_split: Fraction of training data to use for validation
+            seed: Random seed for generator shuffling
 
         Returns:
             train_generator, val_generator, test_generator
         """
-        # Data augmentation for training
-        train_datagen = ImageDataGenerator(
-            rescale=1./255,
+        train_dir = Path(self.data_dir) / "train"
+        val_dir = Path(self.data_dir) / "val"
+        test_dir = Path(self.data_dir) / "test"
+
+        if not train_dir.exists():
+            raise FileNotFoundError(f"Expected training directory at {train_dir}")
+
+        # Training augmentation
+        augmentation_kwargs = dict(
+            rescale=1.0 / 255,
             rotation_range=20,
             width_shift_range=0.2,
             height_shift_range=0.2,
             shear_range=0.2,
             zoom_range=0.2,
             horizontal_flip=True,
-            fill_mode='nearest',
-            validation_split=validation_split
+            fill_mode="nearest",
         )
 
-        # Only rescaling for test data
-        test_datagen = ImageDataGenerator(rescale=1./255)
+        val_image_count = self._count_directory_images(val_dir)
+        self.val_image_count = val_image_count
+        self.using_separate_val = val_image_count >= max(min_val_images, self.batch_size)
+
+        if self.using_separate_val:
+            train_datagen = ImageDataGenerator(**augmentation_kwargs)
+        else:
+            train_datagen = ImageDataGenerator(**augmentation_kwargs, validation_split=validation_split)
+
+        test_datagen = ImageDataGenerator(rescale=1.0 / 255)
 
         # Training generator
         train_generator = train_datagen.flow_from_directory(
-            os.path.join(self.data_dir, 'train'),
+            train_dir,
             target_size=self.img_size,
             batch_size=self.batch_size,
-            class_mode='binary',
-            subset='training',
-            shuffle=True
+            class_mode="binary",
+            subset=None if self.using_separate_val else "training",
+            shuffle=True,
+            seed=seed,
         )
 
-        # Validation generator
-        val_generator = train_datagen.flow_from_directory(
-            os.path.join(self.data_dir, 'train'),
-            target_size=self.img_size,
-            batch_size=self.batch_size,
-            class_mode='binary',
-            subset='validation',
-            shuffle=False
-        )
+        # Validation generator (auto-detect separate validation directory)
+        if self.using_separate_val:
+            val_generator = test_datagen.flow_from_directory(
+                val_dir,
+                target_size=self.img_size,
+                batch_size=self.batch_size,
+                class_mode="binary",
+                shuffle=False,
+            )
+        else:
+            val_generator = train_datagen.flow_from_directory(
+                train_dir,
+                target_size=self.img_size,
+                batch_size=self.batch_size,
+                class_mode="binary",
+                subset="validation",
+                shuffle=False,
+                seed=seed,
+            )
 
         # Test generator
         test_generator = test_datagen.flow_from_directory(
-            os.path.join(self.data_dir, 'test'),
+            test_dir,
             target_size=self.img_size,
             batch_size=self.batch_size,
-            class_mode='binary',
-            shuffle=False
+            class_mode="binary",
+            shuffle=False,
         )
 
         return train_generator, val_generator, test_generator
@@ -96,6 +131,11 @@ class MedicalImageLoader:
         Returns:
             images, labels as numpy arrays
         """
+        if cv2 is None:
+            raise ImportError(
+                "OpenCV is required for load_images_from_directory(). "
+                "Install opencv-python to enable direct image loading."
+            )
         images = []
         labels = []
 
@@ -131,6 +171,24 @@ class MedicalImageLoader:
         )
 
         return dict(enumerate(class_weights))
+
+    @staticmethod
+    def _count_directory_images(directory: Path) -> int:
+        """Count image files within a directory tree."""
+        if not directory.is_dir():
+            return 0
+
+        image_extensions = {".png", ".jpg", ".jpeg", ".bmp", ".gif"}
+        count = 0
+
+        for class_dir in directory.iterdir():
+            if not class_dir.is_dir():
+                continue
+            for file in class_dir.iterdir():
+                if file.is_file() and file.suffix.lower() in image_extensions:
+                    count += 1
+
+        return count
 
 
 def download_dataset_instructions():

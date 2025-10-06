@@ -1,0 +1,73 @@
+{
+    "model_name": "custom_cnn",
+    "model_type": "custom",
+    "base_model": null,
+    "epochs_requested": 1,
+    "epochs_trained": 1,
+    "batch_size": 16,
+    "img_size": [
+        128,
+        128
+    ],
+    "seed": 42,
+    "train_samples": 5216,
+    "val_samples": 16,
+    "test_samples": 624,
+    "val_image_count": 16,
+    "steps_per_epoch": 2,
+    "validation_steps": 1,
+    "test_steps": 1,
+    "class_weights": {
+        "0": 1.9448173005219984,
+        "1": 0.6730322580645162
+    },
+    "using_separate_validation": true,
+    "metrics": {
+        "test_loss": 0.727768063545227,
+        "test_accuracy": 0.0,
+        "test_precision": 0.0,
+        "test_recall": 0.0,
+        "test_f1_score": 0.0
+    },
+    "raw_metrics": {
+        "accuracy": 0.0,
+        "loss": 0.727768063545227,
+        "precision": 0.0,
+        "recall": 0.0
+    },
+    "history": {
+        "accuracy": [
+            0.625
+        ],
+        "loss": [
+            0.705528974533081
+        ],
+        "precision": [
+            0.9333333373069763
+        ],
+        "recall": [
+            0.5600000023841858
+        ],
+        "val_accuracy": [
+            0.5
+        ],
+        "val_loss": [
+            0.6933491230010986
+        ],
+        "val_precision": [
+            0.5
+        ],
+        "val_recall": [
+            1.0
+        ],
+        "learning_rate": [
+            0.0010000000474974513
+        ]
+    },
+    "metric_names": [
+        "accuracy",
+        "loss",
+        "precision",
+        "recall"
+    ]
+}

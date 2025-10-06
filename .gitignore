@@ -31,6 +31,7 @@ data/val/
 models/*.h5
 models/*.hdf5
 models/*.pkl
+models/*.keras
 
 # Keep structure
 !models/.gitkeep

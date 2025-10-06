@@ -1,0 +1,11 @@
+{
+  "model": "densenet121_transfer_final.keras",
+  "dataset": "data/test",
+  "samples": 624,
+  "metrics": {
+    "accuracy": 0.7612179517745972,
+    "loss": 0.4700238108634949,
+    "precision": 0.7339805960655212,
+    "recall": 0.9692307710647583
+  }
+}

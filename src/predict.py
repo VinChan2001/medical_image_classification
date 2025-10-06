@@ -5,10 +5,14 @@ Inference script for making predictions on new medical images.
 import os
 import argparse
 import numpy as np
-import cv2
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 import matplotlib.pyplot as plt
+
+try:  # Optional dependency for visualization support
+    import cv2
+except ImportError:  # pragma: no cover - visualization requires OpenCV
+    cv2 = None
 
 
 class MedicalImagePredictor:
@@ -90,7 +94,12 @@ class MedicalImagePredictor:
         # Get prediction
         predicted_class, confidence = self.predict(img_path)
 
-        # Load original image
+        if cv2 is None:
+            raise ImportError(
+                "OpenCV is required for visualize_prediction(); install opencv-python."
+            )
+
+        # Load original image for visualization
         img = cv2.imread(img_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
